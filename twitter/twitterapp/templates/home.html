@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-9">
+            {% for tweet in tweets %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                    <h5 class="card-title">{{ tweet.user }}</h5>
+                    <p class="card-text">{{ tweet.body }}</p>
+                    <p class="card-text">
+                        <small class="text-body-secondary">{{ tweet.created_at }} By
+                        <a href="{% url 'profile' tweet.user.id %}">@{{ tweet.user.username|lower }}</a>
+                         - {{ tweet.number_of_likes }} Like{{ tweet.number_of_likes|pluralize }} - 
+                        {% if user in tweet.likes.all %}
+                        <a href="{% url 'tweet_like' tweet.id %}"><i class="fa-solid fa-heart" style="color:red"></i></a>
+                        {% else %}
+                        <a href="{% url 'tweet_like' tweet.id %}"><i class="fa fa-heart-o" style="color:red"></i></a>
+                        {% endif %}
+                        &nbsp;
+                        <a href="{% url 'tweet_info' tweet.id %}"><i class="fa fa-eye" style="color:grey"></i></a>
+                        </small>
+                    </p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="col-3">
+            {% if form %}
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-secondary">Tweet</button>
+            </form>
+            {% else %}
+            <div class="alert alert-danger text-center" role="alert">
+                Login to Tweet!!!
+            </div>
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="Username" class="form-label">Username</label>
+                  <input type="text" class="form-control" name="username" id="Username" placeholder="Enter your username">
+                </div>
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password</label>
+                  <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Enter your password">
+                </div>
+                <br>
+                <button type="submit" class="btn btn-secondary">Login</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
